@@ -4,7 +4,7 @@ const sessions = [];
 
 let sessionNextId = 1;
 
-const findSessionById = (id) => sessions.find((session) => session.id === id);
+const findSessionByQrCode = (qrCode) => sessions.find((session) => session.qrCode === qrCode);
 
 const getSessions = () => sessions;
 
@@ -32,8 +32,8 @@ const createSession = (userId, parkId) => {
   return session;
 };
 
-const joinSession = (orderId, userId, parkId) => {
-  const session = findSessionById(orderId);
+const joinSession = (qrCode, userId, parkId) => {
+  const session = findSessionByQrCode(qrCode);
   if (!session) return false;
   if (session.users.includes(userId)) return false;
   const bowlingSession = findBowlingByParkId(parkId);
@@ -45,12 +45,12 @@ const joinSession = (orderId, userId, parkId) => {
     cartProductIds: [...session.cartProductIds, bowlingSession.id],
     users: [...session.users, userId],
   };
-  sessions[findSessionIndexById(orderId)] = newSession;
+  sessions[findSessionIndexById(session.id)] = newSession;
   return newSession;
 };
 
-const sessionPayment = (orderId, userId, amount) => {
-  const session = findSessionById(orderId);
+const sessionPayment = (qrCode, userId, amount) => {
+  const session = findSessionByQrCode(qrCode);
   if (!session) return { message: "Session not found", ok: false };
   if (!session.users.includes(userId)) return { message: "User not found", ok: false };
   if (amount > session.cartRemaingAmount) return { message: "Amount is too high", ok: false };
@@ -59,15 +59,15 @@ const sessionPayment = (orderId, userId, amount) => {
     cartRemaingAmount: session.cartRemaingAmount - amount,
     isStarted: session.cartRemaingAmount - amount === 0,
   };
-  sessions[findSessionIndexById(orderId)] = newSession;
+  sessions[findSessionIndexById(session.id)] = newSession;
   return { message: "Payment done", ok: true, session: newSession };
 };
 
-const orderProduct = (orderId, userId, productId, parkId) => {
-  const session = findSessionById(orderId);
+const orderProduct = (qrCode, userId, productId) => {
+  const session = findSessionByQrCode(qrCode);
   if (!session) return false;
   if (!session.users.includes(userId)) return false;
-  const product = findProductByIdAndParkId(parkId, productId);
+  const product = findProductByIdAndParkId(session.parkId, productId);
   if (!product) return false;
   const newSession = {
     ...session,
@@ -75,7 +75,7 @@ const orderProduct = (orderId, userId, productId, parkId) => {
     cartRemaingAmount: session.cartRemaingAmount + product.price,
     cartProductIds: [...session.cartProductIds, product.id],
   };
-  sessions[findSessionIndexById(orderId)] = newSession;
+  sessions[findSessionIndexById(session.id)] = newSession;
   return newSession;
 };
 
@@ -85,7 +85,7 @@ const deleteSession = (id) => {
 };
 
 module.exports = {
-  findSessionById,
+  findSessionByQrCode,
   createSession,
   deleteSession,
   joinSession,

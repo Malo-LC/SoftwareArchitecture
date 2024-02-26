@@ -16,34 +16,33 @@ router.get("/", passport.authenticate(["user", "admin"], { session: false }), (r
   res.status(200).json({ ok: true, sessions });
 });
 
-router.post("/join/:orderId", passport.authenticate(["admin"], { session: false }), (req, res) => {
+router.post("/join/:qrCode", passport.authenticate(["admin"], { session: false }), (req, res) => {
   const user = req.user;
   const parkId = parseInt(req.query.parkId, 10);
-  const orderId = parseInt(req.params.orderId, 10);
-  if (!parkId || !orderId) return res.status(400).json({ message: "Park ID & orderId are required", ok: false });
-  const session = joinSession(orderId, user.id, parkId);
+  const qrCode = req.params.qrCode;
+  if (!parkId || !qrCode) return res.status(400).json({ message: "Park ID & qrCode are required", ok: false });
+  const session = joinSession(qrCode, user.id, parkId);
   if (!session) return res.status(400).json({ message: "Session not found", ok: false });
   res.status(200).json({ message: "Session joined", ok: true, session });
 });
 
-router.post("/order/:orderId", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
+router.post("/order/:qrCode", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
   const user = req.user;
-  const orderId = parseInt(req.params.orderId, 10);
-  if (!orderId) return res.status(400).json({ message: "Order ID is required", ok: false });
+  const qrCode = req.params.qrCode;
+  if (!qrCode) return res.status(400).json({ message: "QR Code is required", ok: false });
   const productId = parseInt(req.query.productId, 10);
-  const parkId = parseInt(req.query.parkId, 10);
-  if (!productId || !parkId) return res.status(400).json({ message: "Product ID & park ID are required", ok: false });
-  const session = orderProduct(orderId, user.id, productId, parkId);
+  if (!productId) return res.status(400).json({ message: "Product ID is required", ok: false });
+  const session = orderProduct(qrCode, user.id, productId);
   if (!session) return res.status(400).json({ message: "Session not found", ok: false });
   res.status(200).json({ message: "Product order done", ok: true, session });
 });
 
-router.post("/payment/:orderId", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
+router.post("/payment/:qrCode", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
   const user = req.user;
   const amount = parseInt(req.query.amount, 10);
-  const orderId = parseInt(req.params.orderId, 10);
+  const qrCode = req.params.qrCode;
   if (!amount) return res.status(400).json({ message: "Amount is required", ok: false });
-  const session = sessionPayment(orderId, user.id, amount);
+  const session = sessionPayment(qrCode, user.id, amount);
   if (!session.ok) return res.status(400).json({ message: session.message, ok: false });
   res.status(200).json({ message: "Payment done", ok: true, session: session.session });
 });

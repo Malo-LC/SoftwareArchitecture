@@ -59,6 +59,8 @@ const createProduct = (parkId, name, price, type) => {
 
 const getProducts = () => products;
 
+const getProductsByParkId = (parkId) => products.filter((product) => product.parkId === parkId);
+
 const deleteProduct = (productId) => {
   const index = products.findIndex((product) => product.id === productId);
   if (index === -1) return false;
@@ -67,6 +69,7 @@ const deleteProduct = (productId) => {
 };
 
 module.exports = {
+  getProductsByParkId,
   findBowlingByParkId,
   findProductByIdAndParkId,
   createProduct,

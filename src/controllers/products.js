@@ -1,5 +1,6 @@
-const { createProduct, getProducts, deleteProduct } = require("../database/products");
+const { createProduct, deleteProduct, getProductsByParkId } = require("../database/products");
 const passport = require("passport");
+const { findSessionByQrCode } = require("../database/session");
 
 const router = require("express").Router();
 
@@ -12,8 +13,11 @@ router.post("/", passport.authenticate(["admin"], { session: false }), (req, res
   res.status(200).json({ ok: true, product });
 });
 
-router.get("/", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
-  const products = getProducts();
+router.get("/getCatalogForQRCode", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
+  const qrCode = req.query.qrCode;
+  const session = findSessionByQrCode(qrCode);
+  if (!session) return res.status(400).json({ message: "Session not found", ok: false });
+  const products = getProductsByParkId(session.parkId);
   res.status(200).json({ ok: true, products });
 });
 
