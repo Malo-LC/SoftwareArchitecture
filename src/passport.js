@@ -2,7 +2,7 @@ const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 
-const users = require("./users");
+const users = require("./database/users");
 
 function getToken(req) {
   let token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);

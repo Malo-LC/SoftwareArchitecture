@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use("/users", require("./controllers/users/users"));
-app.use("/", require("./controllers/test/test"));
+app.use("/", require("./controllers/session/session"));
 
 app.listen(process.env.PORT || 3000, () =>
   console.log(`Server running on http://localhost:${process.env.PORT || 3000}`),

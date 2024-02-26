@@ -1,8 +1,7 @@
 const router = require("express").Router();
 const passport = require("passport");
 
-// Protected route (middleware checks for JWT)
-router.get("/protected", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
+router.post("/create", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
   res.status(200).json({ message: "Welcome, " + req.user.username });
 });
 
