@@ -6,7 +6,6 @@ const users = require("./database/users");
 
 function getToken(req) {
   let token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-  console.log(token);
   if (!token) token = req.cookies?.jwt;
   return token;
 }

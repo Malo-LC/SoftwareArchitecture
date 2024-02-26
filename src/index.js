@@ -8,8 +8,9 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-app.use("/users", require("./controllers/users/users"));
-app.use("/", require("./controllers/session/session"));
+app.use("/users", require("./controllers/users"));
+app.use("/session", require("./controllers/session"));
+app.use("/products", require("./controllers/products"));
 
 app.listen(process.env.PORT || 3000, () =>
   console.log(`Server running on http://localhost:${process.env.PORT || 3000}`),

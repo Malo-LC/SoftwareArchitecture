@@ -36,13 +36,40 @@ const products = [
   },
 ];
 
+let nextProductId = 6;
+
 const findBowlingByParkId = (parkId) =>
   products.find((product) => product.parkId === parkId && product.type === "bowling");
 
 const findProductByIdAndParkId = (parkId, productId) =>
   products.find((product) => product.parkId === parkId && product.id === productId);
 
+const createProduct = (parkId, name, price, type) => {
+  const product = {
+    id: nextProductId,
+    parkId,
+    name,
+    price,
+    type,
+  };
+  products.push(product);
+  nextProductId++;
+  return product;
+};
+
+const getProducts = () => products;
+
+const deleteProduct = (productId) => {
+  const index = products.findIndex((product) => product.id === productId);
+  if (index === -1) return false;
+  products.splice(index, 1);
+  return true;
+};
+
 module.exports = {
   findBowlingByParkId,
   findProductByIdAndParkId,
+  createProduct,
+  getProducts,
+  deleteProduct,
 };

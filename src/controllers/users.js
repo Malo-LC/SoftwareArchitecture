@@ -2,7 +2,7 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-const users = require("../../database/users");
+const users = require("../database/users");
 
 // Login route
 router.post("/login", async (req, res) => {
@@ -18,7 +18,7 @@ router.post("/login", async (req, res) => {
   }
 
   const payload = { id: user.id, role: user.role };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
 
   res.status(200).json({ token });
 });
