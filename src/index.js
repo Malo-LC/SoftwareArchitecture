@@ -1,11 +1,17 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const app = express();
-require("./passport")(app);
+const morgan = require("morgan");
+const helmet = require("helmet");
 
-app.use(bodyParser.json({ limit: "50mb" }));
+const app = express();
+
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(morgan("dev"));
+app.use(helmet());
+
+require("./passport")(app);
 
 // Routes
 app.use("/users", require("./controllers/users"));
