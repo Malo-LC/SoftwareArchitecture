@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 
 const app = express();
+require("./passport")(app);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "50mb" }));

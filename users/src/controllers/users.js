@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
 const bcrypt = require("bcryptjs");
 
 const users = require("../database/users");
@@ -23,10 +24,20 @@ router.post("/login", async (req, res) => {
   res.status(200).json({ token });
 });
 
-router.get("/all", (req, res) => {
-  const apiKey = req.headers["x-api-key"];
-  if (!apiKey || apiKey !== process.env.API_KEY) return res.status(401).json({ message: "Unauthorized" });
-  res.status(200).json(users);
+router.get("/admin", passport.authenticate(["session"], { session: false }), (req, res) => {
+  const id = parseInt(req.query.id, 10);
+  if (!id) return res.status(401).json({ message: "Unauthorized", ok: false });
+  const user = users.find((user) => user.id === id && user.role === "admin");
+  if (!user) return res.status(401).json({ message: "Unauthorized", ok: false });
+  res.status(200).json({ ok: true, user });
+});
+
+router.get("/user", passport.authenticate(["session"], { session: false }), (req, res) => {
+  const id = parseInt(req.query.id, 10);
+  if (!id) return res.status(401).json({ message: "Unauthorized", ok: false });
+  const user = users.find((user) => user.id === id && user.role !== "admin");
+  if (!user) return res.status(401).json({ message: "Unauthorized", ok: false });
+  res.status(200).json({ ok: true, user });
 });
 
 module.exports = router;

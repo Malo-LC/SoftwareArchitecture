@@ -26,9 +26,7 @@ router.get("/getCatalogForQRCode", passport.authenticate(["user", "admin"], { se
   res.status(200).json({ ok: true, products });
 });
 
-router.get("/findBowlingByParkId", (req, res) => {
-  const apiKey = req.headers["x-api-key"];
-  if (!apiKey || apiKey !== process.env.API_KEY) return res.status(401).json({ message: "Unauthorized", ok: false });
+router.get("/findBowlingByParkId", passport.authenticate(["session"], { session: false }), (req, res) => {
   const parkId = req.query.parkId;
   if (!parkId) return res.status(400).json({ message: "Park ID is required", ok: false });
   const product = findBowlingByParkId(parseInt(parkId, 10));
@@ -36,9 +34,7 @@ router.get("/findBowlingByParkId", (req, res) => {
   res.status(200).json({ ok: true, product });
 });
 
-router.get("/findProductByIdAndParkId", (req, res) => {
-  const apiKey = req.headers["x-api-key"];
-  if (!apiKey || apiKey !== process.env.API_KEY) return res.status(401).json({ message: "Unauthorized", ok: false });
+router.get("/findProductByIdAndParkId", passport.authenticate(["session"], { session: false }), (req, res) => {
   const parkId = req.query.parkId;
   const productId = req.query.productId;
   if (!parkId || !productId) return res.status(400).json({ message: "Park ID & Product ID are required", ok: false });

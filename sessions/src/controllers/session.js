@@ -16,9 +16,7 @@ router.get("/", passport.authenticate(["user", "admin"], { session: false }), (r
   res.status(200).json({ ok: true, sessions });
 });
 
-router.get("/qrCode/:qrCode", (req, res) => {
-  const apiKey = req.headers["x-api-key"];
-  if (!apiKey || apiKey !== process.env.API_KEY) return res.status(401).json({ message: "Unauthorized", ok: false });
+router.get("/qrCode/:qrCode", passport.authenticate(["session"], { session: false }), (req, res) => {
   const sessions = getSessions();
   const qrCode = req.params.qrCode;
   if (!qrCode) return res.status(400).json({ message: "QR Code is required", ok: false });
@@ -37,13 +35,13 @@ router.post("/join/:qrCode", passport.authenticate(["admin"], { session: false }
   res.status(200).json({ message: "Session joined", ok: true, session });
 });
 
-router.post("/order/:qrCode", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
+router.post("/order/:qrCode", passport.authenticate(["user", "admin"], { session: false }), async (req, res) => {
   const user = req.user;
   const qrCode = req.params.qrCode;
   if (!qrCode) return res.status(400).json({ message: "QR Code is required", ok: false });
   const productId = parseInt(req.query.productId, 10);
   if (!productId) return res.status(400).json({ message: "Product ID is required", ok: false });
-  const session = orderProduct(qrCode, user.id, productId);
+  const session = await orderProduct(qrCode, user.id, productId);
   if (!session) return res.status(400).json({ message: "Session not found", ok: false });
   res.status(200).json({ message: "Product order done", ok: true, session });
 });

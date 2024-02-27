@@ -67,11 +67,11 @@ const sessionPayment = (qrCode, userId, amount) => {
   return { message: "Payment done", ok: true, session: newSession };
 };
 
-const orderProduct = (qrCode, userId, productId) => {
+const orderProduct = async (qrCode, userId, productId) => {
   const session = findSessionByQrCode(qrCode);
   if (!session) return false;
   if (!session.users.includes(userId)) return false;
-  const productRes = apiProducts.get(`/findProductByIdAndParkId?parkId=${session.parkId}&productId=${productId}`);
+  const productRes = await apiProducts.get(`/findProductByIdAndParkId?parkId=${session.parkId}&productId=${productId}`);
   if (!productRes.ok) return false;
 
   const product = productRes.product;
