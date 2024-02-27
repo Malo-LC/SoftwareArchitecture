@@ -2,11 +2,11 @@ const router = require("express").Router();
 const passport = require("passport");
 const { createSession, getSessions, joinSession, sessionPayment, orderProduct } = require("../database/session");
 
-router.post("/", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
+router.post("/", passport.authenticate(["user", "admin"], { session: false }), async (req, res) => {
   const user = req.user;
   const parkId = parseInt(req.query.parkId, 10);
   if (!parkId) return res.status(400).json({ message: "Park ID is required", ok: false });
-  const session = createSession(user.id, parkId);
+  const session = await createSession(user.id, parkId);
   if (!session) return res.status(400).json({ message: "No free alley available", ok: false });
   res.status(200).json({ message: "Session created", ok: true, session });
 });
@@ -14,6 +14,15 @@ router.post("/", passport.authenticate(["user", "admin"], { session: false }), (
 router.get("/", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
   const sessions = getSessions();
   res.status(200).json({ ok: true, sessions });
+});
+
+router.get("/qrCode/:qrCode", passport.authenticate(["session"], { session: false }), (req, res) => {
+  const sessions = getSessions();
+  const qrCode = req.params.qrCode;
+  if (!qrCode) return res.status(400).json({ message: "QR Code is required", ok: false });
+  const session = sessions.find((session) => session.qrCode === qrCode);
+  if (!session) return res.status(400).json({ message: "Session not found", ok: false });
+  res.status(200).json({ ok: true, session });
 });
 
 router.post("/join/:qrCode", passport.authenticate(["admin"], { session: false }), (req, res) => {
@@ -26,13 +35,13 @@ router.post("/join/:qrCode", passport.authenticate(["admin"], { session: false }
   res.status(200).json({ message: "Session joined", ok: true, session });
 });
 
-router.post("/order/:qrCode", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
+router.post("/order/:qrCode", passport.authenticate(["user", "admin"], { session: false }), async (req, res) => {
   const user = req.user;
   const qrCode = req.params.qrCode;
   if (!qrCode) return res.status(400).json({ message: "QR Code is required", ok: false });
   const productId = parseInt(req.query.productId, 10);
   if (!productId) return res.status(400).json({ message: "Product ID is required", ok: false });
-  const session = orderProduct(qrCode, user.id, productId);
+  const session = await orderProduct(qrCode, user.id, productId);
   if (!session) return res.status(400).json({ message: "Session not found", ok: false });
   res.status(200).json({ message: "Product order done", ok: true, session });
 });

@@ -37,12 +37,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base url}}/products/getCatalogForQRCode?qrCode=anubfajncajikclxjkqnujg",
+							"raw": "{{base url products}}/getCatalogForQRCode?qrCode=anubfajncajikclxjkqnujg",
 							"host": [
-								"{{base url}}"
+								"{{base url products}}"
 							],
 							"path": [
-								"products",
 								"getCatalogForQRCode"
 							],
 							"query": [
@@ -63,7 +62,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token user}}",
+									"value": "{{token admin}}",
 									"type": "string"
 								}
 							]
@@ -80,12 +79,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base url}}/products/1",
+							"raw": "{{base url products}}/1",
 							"host": [
-								"{{base url}}"
+								"{{base url products}}"
 							],
 							"path": [
-								"products",
 								"1"
 							]
 						}
@@ -100,7 +98,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token user}}",
+									"value": "{{token admin}}",
 									"type": "string"
 								}
 							]
@@ -117,12 +115,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{base url}}/products",
+							"raw": "{{base url products}}",
 							"host": [
-								"{{base url}}"
-							],
-							"path": [
-								"products"
+								"{{base url products}}"
 							]
 						}
 					},
@@ -141,7 +136,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token user}}",
+									"value": "{{token admin}}",
 									"type": "string"
 								}
 							]
@@ -149,12 +144,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base url}}/session",
+							"raw": "{{base url sessions}}",
 							"host": [
-								"{{base url}}"
-							],
-							"path": [
-								"session"
+								"{{base url sessions}}"
 							]
 						}
 					},
@@ -176,12 +168,12 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{base url}}/session?parkId=1",
+							"raw": "{{base url sessions}}/?parkId=1",
 							"host": [
-								"{{base url}}"
+								"{{base url sessions}}"
 							],
 							"path": [
-								"session"
+								""
 							],
 							"query": [
 								{
@@ -209,12 +201,11 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{base url}}/session/payment/anubfajncajikclxjkqnujg?amount=77",
+							"raw": "{{base url sessions}}/payment/anubfajncajikclxjkqnujg?amount=77",
 							"host": [
-								"{{base url}}"
+								"{{base url sessions}}"
 							],
 							"path": [
-								"session",
 								"payment",
 								"anubfajncajikclxjkqnujg"
 							],
@@ -244,12 +235,11 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{base url}}/session/order/anubfajncajikclxjkqnujg?productId=3",
+							"raw": "{{base url sessions}}/order/anubfajncajikclxjkqnujg?productId=3",
 							"host": [
-								"{{base url}}"
+								"{{base url sessions}}"
 							],
 							"path": [
-								"session",
 								"order",
 								"anubfajncajikclxjkqnujg"
 							],
@@ -266,58 +256,79 @@
 			]
 		},
 		{
-			"name": "login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"user@localhost.com\",\n    \"password\": \"admin\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "users",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@localhost.com\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url users}}/login",
+							"host": [
+								"{{base url users}}"
+							],
+							"path": [
+								"login"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base url}}/users/login",
-					"host": [
-						"{{base url}}"
-					],
-					"path": [
-						"users",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/admin",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{token admin}}",
-							"type": "string"
+				{
+					"name": "get all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{API_KEY_VALUE}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "{{API_KEY_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@localhost.com\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url users}}/all",
+							"host": [
+								"{{base url users}}"
+							],
+							"path": [
+								"all"
+							]
 						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base url}}/admin",
-					"host": [
-						"{{base url}}"
-					],
-					"path": [
-						"admin"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }

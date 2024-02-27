@@ -1,8 +1,8 @@
 const passport = require("passport");
+const apiUsers = require("./utils/apiUsers");
 const JwtStrategy = require("passport-jwt").Strategy;
+const CustomStrategy = require("passport-custom").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
-
-const users = require("./database/users");
 
 function getToken(req) {
   let token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
@@ -19,8 +19,9 @@ module.exports = function (app) {
     "user",
     new JwtStrategy(opts, async function (jwtPayload, done) {
       try {
-        const user = users.find((user) => user.id === jwtPayload.id);
-        if (user) return done(null, user);
+        const user = await apiUsers.get(`/user?id=${jwtPayload.id}`);
+        if (!user.ok) return done(null, false);
+        return done(null, user.user);
       } catch (error) {
         console.log(error);
       }
@@ -29,11 +30,23 @@ module.exports = function (app) {
   );
 
   passport.use(
+    "session",
+    new CustomStrategy(function (req, done) {
+      const apiKey = req.headers["x-api-key"];
+      if (!apiKey || apiKey !== process.env.API_KEY) {
+        return done(null, false);
+      }
+      done(null, true);
+    }),
+  );
+
+  passport.use(
     "admin",
     new JwtStrategy(opts, async function (jwtPayload, done) {
       try {
-        const user = users.find((user) => user.id === jwtPayload.id && user.role === "admin");
-        if (user) return done(null, user);
+        const isAdmin = await apiUsers.get(`/admin?id=${jwtPayload.id}`);
+        if (!isAdmin.ok) return done(null, false);
+        return done(null, isAdmin.user);
       } catch (error) {
         console.log(error);
       }
