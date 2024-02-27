@@ -1,8 +1,7 @@
 const passport = require("passport");
+const apiUsers = require("./utils/apiUsers");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
-
-const users = require("./database/users");
 
 function getToken(req) {
   let token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
@@ -19,6 +18,7 @@ module.exports = function (app) {
     "user",
     new JwtStrategy(opts, async function (jwtPayload, done) {
       try {
+        const users = await apiUsers.get("/all");
         const user = users.find((user) => user.id === jwtPayload.id);
         if (user) return done(null, user);
       } catch (error) {
@@ -32,6 +32,7 @@ module.exports = function (app) {
     "admin",
     new JwtStrategy(opts, async function (jwtPayload, done) {
       try {
+        const users = await apiUsers.get("/all");
         const user = users.find((user) => user.id === jwtPayload.id && user.role === "admin");
         if (user) return done(null, user);
       } catch (error) {

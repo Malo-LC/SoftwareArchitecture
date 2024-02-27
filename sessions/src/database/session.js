@@ -1,5 +1,5 @@
+const apiProducts = require("../utils/apiProducts");
 const { findFreeAlley, modifyAlley } = require("./alleys");
-const { findBowlingByParkId, findProductByIdAndParkId } = require("./products");
 const sessions = [];
 
 let sessionNextId = 1;
@@ -10,11 +10,13 @@ const getSessions = () => sessions;
 
 const findSessionIndexById = (id) => sessions.findIndex((session) => session.id === id);
 
-const createSession = (userId, parkId) => {
+const createSession = async (userId, parkId) => {
   const alley = findFreeAlley(parkId);
   if (!alley) return false;
-  const bowlingSession = findBowlingByParkId(parkId);
-  if (!bowlingSession) return false;
+  const bowlingSessionRes = await apiProducts.get(`/findBowlingByParkId?parkId=${parkId}`);
+  if (!bowlingSessionRes.ok) return false;
+
+  const bowlingSession = bowlingSessionRes.product;
   const session = {
     id: sessionNextId,
     ownerUserId: userId,
@@ -32,12 +34,14 @@ const createSession = (userId, parkId) => {
   return session;
 };
 
-const joinSession = (qrCode, userId, parkId) => {
+const joinSession = async (qrCode, userId, parkId) => {
   const session = findSessionByQrCode(qrCode);
   if (!session) return false;
   if (session.users.includes(userId)) return false;
-  const bowlingSession = findBowlingByParkId(parkId);
-  if (!bowlingSession) return false;
+  const bowlingSessionRes = await apiProducts.get(`/findBowlingByParkId?parkId=${parkId}`);
+  if (!bowlingSessionRes.ok) return false;
+
+  const bowlingSession = bowlingSessionRes.product;
   const newSession = {
     ...session,
     cartTotal: session.cartTotal + bowlingSession.price,
@@ -67,8 +71,10 @@ const orderProduct = (qrCode, userId, productId) => {
   const session = findSessionByQrCode(qrCode);
   if (!session) return false;
   if (!session.users.includes(userId)) return false;
-  const product = findProductByIdAndParkId(session.parkId, productId);
-  if (!product) return false;
+  const productRes = apiProducts.get(`/findProductByIdAndParkId?parkId=${session.parkId}&productId=${productId}`);
+  if (!productRes.ok) return false;
+
+  const product = productRes.product;
   const newSession = {
     ...session,
     cartTotal: session.cartTotal + product.price,
