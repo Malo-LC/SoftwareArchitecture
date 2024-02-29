@@ -9,5 +9,5 @@
 - Faire une route pour les notifications pour le restant a payer
 - Quand tout est payé et terminé, libérer la piste
 - Ajouter la possibilité a l'admin de changer le reste a payer (si un utilisateur a payé en liquide par exemple)
-- get/{id} GET a single order by orderID
+- /get/{id} GET a single order by orderID
 - /getForUser/{username} GET all orders for a given username (email)
