@@ -53,7 +53,24 @@ const joinSession = async (qrCode, userId, parkId) => {
   return newSession;
 };
 
-const sessionPayment = (qrCode, userId, amount) => {
+const sendMail = async (userMail, userName, amount) => {
+  const body = {
+    userName,
+    email: userMail,
+    value: amount,
+  };
+  const url = "http://localhost:5500/";
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": process.env.API_KEY,
+    },
+    body: JSON.stringify(body),
+  });
+};
+
+const sessionPayment = (qrCode, userId, amount, userMail, userName) => {
   const session = findSessionByQrCode(qrCode);
   if (!session) return { message: "Session not found", ok: false };
   if (!session.users.includes(userId)) return { message: "User not found", ok: false };
@@ -64,6 +81,7 @@ const sessionPayment = (qrCode, userId, amount) => {
     isStarted: session.cartRemaingAmount - amount === 0,
   };
   sessions[findSessionIndexById(session.id)] = newSession;
+  sendMail(userMail, userName, amount);
   return { message: "Payment done", ok: true, session: newSession };
 };
 

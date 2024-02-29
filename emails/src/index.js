@@ -21,28 +21,31 @@ app.post("/", async (req, res) => {
     return res.status(401).json({ message: "Unauthorized", ok: false });
   }
 
-  const { name, email, value } = req.body;
-  if (!name || !email || !value) return res.status(400).json({ message: "Missing parameters", ok: false });
+  const { userName, email, value } = req.body;
+  if (!userName || !email || !value) return res.status(400).json({ message: "Missing parameters", ok: false });
 
   const mailOptions = {
     from: "malo.le.corvec@efrei.net",
     to: email,
     subject: "Successful paiement",
-    html: `<h1>Thank you ${name} for your purchase</h1>
+    html: `<h1>Thank you ${userName} for your purchase</h1>
     <p>Here is your purchase details:</p>
     <p>${value}</p>`,
   };
 
+  console.log("sending mail...", mailOptions);
+
   try {
-    await sgMail.send(mailOptions);
+    // TODO: uncomment this line when you want to send the email
+    // await sgMail.send(mailOptions);
+    console.log("Email sent !");
     return res.status(200).json({ message: "Email sent", ok: true });
   } catch (error) {
-    console.log(error);
     console.log(error.response.body);
     return res.status(500).json({ message: "Internal server error", ok: false });
   }
 });
 
-app.listen(process.env.PORT || 6000, () =>
-  console.log(`Server running on http://localhost:${process.env.PORT || 6000}`),
+app.listen(process.env.PORT || 5500, () =>
+  console.log(`Server running on http://localhost:${process.env.PORT || 5500}`),
 );

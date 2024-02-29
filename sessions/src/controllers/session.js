@@ -51,7 +51,7 @@ router.post("/payment/:qrCode", passport.authenticate(["user", "admin"], { sessi
   const amount = parseInt(req.query.amount, 10);
   const qrCode = req.params.qrCode;
   if (!amount) return res.status(400).json({ message: "Amount is required", ok: false });
-  const session = sessionPayment(qrCode, user.id, amount);
+  const session = sessionPayment(qrCode, user.id, amount, user.email, user.username);
   if (!session.ok) return res.status(400).json({ message: session.message, ok: false });
   res.status(200).json({ message: "Payment done", ok: true, session: session.session });
 });
