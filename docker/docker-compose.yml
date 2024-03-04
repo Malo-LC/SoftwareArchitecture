@@ -1,0 +1,76 @@
+version: '3.8'
+services:
+  emails-service:
+    build: ../emails
+    ports:
+      - "5500:3000"
+    env_file:
+      - ../.env
+    volumes:
+      - ../emails:/app
+    depends_on:
+      - mysql
+
+  products-service:
+    build: ../products
+    ports:
+      - "5100:3000"
+    env_file:
+      - ../.env
+    volumes:
+      - ../products:/app
+    depends_on:
+      - mysql
+
+  sessions-service:
+    build: ../sessions
+    ports:
+      - "5000:3000"
+    env_file:
+      - ../.env
+    volumes:
+      - ../sessions:/app
+    depends_on:
+      - mysql
+
+  users-service:
+    build: ../users
+    ports:
+      - "5200:3000"
+    env_file:
+      - ../.env
+    volumes:
+      - ../users:/app
+    depends_on:
+      - mysql
+
+  api-gateway:
+    build: ../api-gateway
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../.env
+    volumes:
+      - ../api-gateway:/app
+    depends_on:
+      - emails-service
+      - products-service
+      - sessions-service
+      - users-service
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    env_file:
+      - ../.env
+    volumes:
+      - ../database/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ../database/mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
+
+networks:
+  default:
+    driver: bridge
