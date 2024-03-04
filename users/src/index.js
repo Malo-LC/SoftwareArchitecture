@@ -15,6 +15,6 @@ app.use(helmet());
 // Routes
 app.use(require("./controllers/users"));
 
-app.listen(process.env.PORT || 5000, () =>
-  console.log(`Server running on http://localhost:${process.env.PORT || 5000}`),
+app.listen(process.env.USERS_API_PORT || 5000, () =>
+  console.log(`Server running on http://${process.env.USERS_API_HOST || localhost}:${process.env.USERS_API_PORT || 5000}`),
 );
