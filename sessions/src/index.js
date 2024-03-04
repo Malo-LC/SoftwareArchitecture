@@ -16,6 +16,6 @@ app.use(helmet());
 // Routes
 app.use(require("./controllers/session"));
 
-app.listen(process.env.PORT || 4000, () =>
-  console.log(`Server running on http://localhost:${process.env.PORT || 4000}`),
+app.listen(process.env.SESSIONS_API_PORT || 4000, () =>
+  console.log(`Server running on http://${process.env.SESSIONS_API_HOST || localhost}:${process.env.SESSIONS_API_PORT || 4000}`),
 );
