@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS bowling-corp;
-USE bowling-corp;
+CREATE DATABASE IF NOT EXISTS bowling_corp;
+USE bowling_corp;
 
 
 CREATE TABLE IF NOT EXISTS User (

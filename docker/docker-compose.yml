@@ -2,8 +2,9 @@ version: '3.8'
 services:
   emails-service:
     build: ../emails
+    container_name: email-service
     ports:
-      - "5500:3000"
+      - "5500:5500"
     env_file:
       - ../.env
     volumes:
@@ -13,8 +14,9 @@ services:
 
   products-service:
     build: ../products
+    container_name: product-service
     ports:
-      - "5100:3000"
+      - "5100:5100"
     env_file:
       - ../.env
     volumes:
@@ -24,8 +26,9 @@ services:
 
   sessions-service:
     build: ../sessions
+    container_name: session-service
     ports:
-      - "5000:3000"
+      - "5200:5200"
     env_file:
       - ../.env
     volumes:
@@ -35,8 +38,9 @@ services:
 
   users-service:
     build: ../users
+    container_name: user-service
     ports:
-      - "5200:3000"
+      - "5000:5000"
     env_file:
       - ../.env
     volumes:
@@ -46,6 +50,7 @@ services:
 
   mysql:
     image: mysql:5.7
+    container_name: mysql-service
     ports:
       - "3306:3306"
     env_file:
