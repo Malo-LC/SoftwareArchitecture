@@ -44,20 +44,6 @@ services:
     depends_on:
       - mysql
 
-  api-gateway:
-    build: ../api-gateway
-    ports:
-      - "3000:3000"
-    env_file:
-      - ../.env
-    volumes:
-      - ../api-gateway:/app
-    depends_on:
-      - emails-service
-      - products-service
-      - sessions-service
-      - users-service
-
   mysql:
     image: mysql:5.7
     ports:
