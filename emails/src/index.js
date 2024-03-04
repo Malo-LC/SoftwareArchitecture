@@ -46,6 +46,6 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 5500, () =>
-  console.log(`Server running on http://localhost:${process.env.PORT || 5500}`),
+app.listen(process.env.EMAILS_API_PORT || 5500, () =>
+  console.log(`Server running on http://${process.env.EMAILS_API_HOST || localhost}:${process.env.EMAILS_API_PORT || 5500}`),
 );
