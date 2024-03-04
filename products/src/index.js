@@ -15,6 +15,6 @@ app.use(helmet());
 // Routes
 app.use(require("./controllers/products"));
 
-app.listen(process.env.PORT || 3000, () =>
-  console.log(`Server running on http://localhost:${process.env.PORT || 3000}`),
+app.listen(process.env.PRODUTS_API_PORT || 3000, () =>
+  console.log(`Server running on http://${process.env.PRODUTS_API_HOST || localhost}:${process.env.PRODUTS_API_PORT || 3000}`),
 );
