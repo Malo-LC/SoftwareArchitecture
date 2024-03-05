@@ -3,74 +3,88 @@ USE bowling_corp;
 
 
 CREATE TABLE IF NOT EXISTS User (
-  id INTEGER PRIMARY KEY,
-  username VARCHAR NOT NULL,
-  email VARCHAR UNIQUE NOT NULL,
-  password VARCHAR NOT NULL,
-  role VARCHAR NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('agent', 'customer') NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (email)
+);
+
+CREATE TABLE IF NOT EXISTS Token (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  token VARCHAR(255) NOT NULL,
+  active BOOLEAN,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  finished_at DATETIME,
+  life_time INT,
+  id_user INT,
 );
 
 CREATE TABLE IF NOT EXISTS Track (
-  id INTEGER PRIMARY KEY,
-  name VARCHAR,
-  id_qrcode INTEGER
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255),
+  id_qrcode INT
 );
 
 CREATE TABLE IF NOT EXISTS QRCode (
-  id INTEGER PRIMARY KEY,
-  type VARCHAR,
-  size INTEGER,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type VARCHAR(255),
+  size INT,
   data LONGBLOB NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Session (
-  id INTEGER PRIMARY KEY,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   active BOOLEAN,
-  created_at TIMESTAMP,
-  finished_at TIMESTAMP,
-  id_track INTEGER
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  finished_at DATETIME,
+  id_track INT
 );
 
 CREATE TABLE IF NOT EXISTS User_Session (
-  id INTEGER PRIMARY KEY,
-  id_user INTEGER,
-  id_session INTEGER
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_user INT,
+  id_session INT
 );
 
 CREATE TABLE IF NOT EXISTS Bill (
-  id INTEGER PRIMARY KEY,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   amount FLOAT,
   is_paid BOOLEAN,
-  id_user_session INTEGER
+  id_user_session INT
 );
 
-CREATE TABLE IF NOT EXISTS Order (
-  id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Command (
+  id INT AUTO_INCREMENT PRIMARY KEY,
   is_paid BOOLEAN,
   discount FLOAT,
-  id_user_session INTEGER,
-  id_product INTEGER
+  id_user_session INT,
+  id_product INT
 );
 
 CREATE TABLE IF NOT EXISTS Product (
-  id INTEGER PRIMARY KEY,
-  name VARCHAR,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255),
   price FLOAT,
-  inventory INTEGER,
-  type VARCHAR
+  inventory INT,
+  type ENUM('snak', 'soft_drink', 'alcohol', 'food')
 );
+
+ALTER TABLE Token ADD FOREIGN KEY (id_user) REFERENCES User (id);
 
 ALTER TABLE Track ADD FOREIGN KEY (id_qrcode) REFERENCES QRCode (id);
 
-ALTER TABLE Track ADD FOREIGN KEY (id) REFERENCES Session (id_track);
+ALTER TABLE Session ADD FOREIGN KEY (id_track) REFERENCES Track (id);
 
-ALTER TABLE User ADD FOREIGN KEY (id) REFERENCES User_Session (id_user);
+ALTER TABLE User_Session ADD FOREIGN KEY (id_user) REFERENCES User (id);
 
-ALTER TABLE Session ADD FOREIGN KEY (id) REFERENCES User_Session (id_session);
+ALTER TABLE User_Session ADD FOREIGN KEY (id_session) REFERENCES Session (id);
 
 ALTER TABLE Bill ADD FOREIGN KEY (id_user_session) REFERENCES User_Session (id);
 
-ALTER TABLE User_Session ADD FOREIGN KEY (id) REFERENCES Order (id_user_session);
+ALTER TABLE Command ADD FOREIGN KEY (id_user_session) REFERENCES User_Session (id);
 
-ALTER TABLE Product ADD FOREIGN KEY (id) REFERENCES Order (id_product);
+ALTER TABLE Command ADD FOREIGN KEY (id_product) REFERENCES Product (id);
+
