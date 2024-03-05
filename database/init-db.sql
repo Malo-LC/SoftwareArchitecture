@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS User_Session (
 CREATE TABLE IF NOT EXISTS Bill (
   id INT AUTO_INCREMENT PRIMARY KEY,
   amount FLOAT,
+  remaining FLOAT,
   is_paid BOOLEAN,
   id_user_session INT
 );

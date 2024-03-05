@@ -20,7 +20,7 @@ app.listen(process.env.USERS_API_PORT || 5000, () =>
 );
 
 // Database connection
-const { testDatabaseConnection, syncSequelize } = require('./database/database');
+const { testDatabaseConnection, syncSequelize } = require("./database/database");
 
 // Tester la connexion à la base de données
 testDatabaseConnection();
