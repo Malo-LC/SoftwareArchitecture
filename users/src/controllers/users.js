@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
 
-const { createNewUser, getUserByEmail, isUserAlreadyExists } = require("../database/users");
-const { Token, createNewToken } = require("../database/token");
+const { createNewUser, getUserById, getUserByEmail, isUserAlreadyExists } = require("../database/users");
+const { createToken, verifyToken } = require("./token");
 
 const emailRegex = /\S+@\S+\.\S+/;
 
@@ -68,12 +68,33 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
-  const token = createNewToken(user);
+  const token = createToken(user);
 
   res.status(200).json({ token });
 });
 
-router.get("/admin", passport.authenticate(["session"], { session: false }), (req, res) => {
+// Verify token route
+router.get("/verifytoken", passport.authenticate(["service"], { session: false }), async (req, res) => {
+
+  const decoded = verifyToken(req.headers.authorization.split(" ")[1]);
+  if (!decoded) {
+    console.log("Token is invalid");
+    return res.status(401).json({ message: "Unauthorized", ok: false });
+  } 
+
+  const user = await getUserById(decoded.id);
+  delete user.password;
+
+  if (!user) {
+    console.log("User not found, giving ID: ", decoded.id);
+    return res.status(401).json({ message: "User does not exists", ok: false });
+  }
+
+  res.status(200).json({ message: "Token is valid", ok: true, user: user });
+});
+
+// Does not work with the new database
+router.get("/admin", passport.authenticate(["service"], { session: false }), (req, res) => {
   const id = parseInt(req.query.id, 10);
   if (!id) return res.status(401).json({ message: "Unauthorized", ok: false });
   const user = users.find((user) => user.id === id && user.role === "admin");
@@ -81,7 +102,8 @@ router.get("/admin", passport.authenticate(["session"], { session: false }), (re
   res.status(200).json({ ok: true, user });
 });
 
-router.get("/user", passport.authenticate(["session"], { session: false }), (req, res) => {
+// Does not work with the new database
+router.get("/user", passport.authenticate(["service"], { session: false }), (req, res) => {
   const id = parseInt(req.query.id, 10);
   if (!id) return res.status(401).json({ message: "Unauthorized", ok: false });
   const user = users.find((user) => user.id === id && user.role !== "admin");

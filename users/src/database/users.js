@@ -48,6 +48,20 @@ const createNewUser = (username, email, password, role) => {
   }
 };
 
+const getUserById = async (id) => {
+  try {
+    const user = await User.findByPk(id);
+    if (user) {
+      return user.toJSON();
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs:', error);
+    return null;
+  }
+}
+
 // Return user data by email
 const getUserByEmail = async (email) => {
   try {
@@ -103,4 +117,4 @@ const isUserAlreadyExists = async (email) => {
 }
 
 
-module.exports = { createNewUser, getAllUsers, isUserAlreadyExists, getUserByEmail };
+module.exports = { createNewUser, getAllUsers, isUserAlreadyExists, getUserById, getUserByEmail };

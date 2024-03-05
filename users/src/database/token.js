@@ -1,8 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const { sequelize } = require('./database');
 
-const jwt = require("jsonwebtoken");
-
 const Token = sequelize.define('Token', {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
   token: { type: DataTypes.STRING(255), allowNull: false },
@@ -13,12 +11,8 @@ const Token = sequelize.define('Token', {
   id_user: DataTypes.INTEGER,
 }, { timestamps: false });
 
-const createNewToken = (user) => {
+const createNewToken = async (user, token, life_time) => {
   try {
-    const payload = { id: user.id, role: user.role };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
-
-    const life_time = 86400; // 1 day in seconds
     const created_at = new Date();
     const finished_at = calculateFinishedAt(created_at, life_time);
 
