@@ -4,7 +4,7 @@ const passport = require("passport");
 const bcrypt = require("bcryptjs");
 
 const { createNewUser, getUserById, getUserByEmail, isUserAlreadyExists } = require("../database/users");
-const { createToken, verifyToken } = require("./token");
+const { createToken, verifyToken } = require("../utils/token");
 
 const emailRegex = /\S+@\S+\.\S+/;
 
