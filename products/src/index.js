@@ -18,3 +18,10 @@ app.use(require("./controllers/products"));
 app.listen(process.env.PRODUTS_API_PORT || 3000, () =>
   console.log(`Server running on http://${process.env.PRODUTS_API_HOST || localhost}:${process.env.PRODUTS_API_PORT || 3000}`),
 );
+
+// Database connection
+const { testDatabaseConnection, syncSequelize } = require('./database/database');
+
+// Tester la connexion à la base de données
+testDatabaseConnection();
+syncSequelize();

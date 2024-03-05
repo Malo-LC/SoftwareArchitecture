@@ -1,3 +1,7 @@
+const passport = require("passport");
+const apiSessions = require("../utils/apiSessions");
+const router = require("express").Router();
+
 const {
   createProduct,
   deleteProduct,
@@ -5,9 +9,11 @@ const {
   findBowlingByParkId,
   findProductByIdAndParkId,
 } = require("../database/products");
-const passport = require("passport");
-const apiSessions = require("../utils/apiSessions");
-const router = require("express").Router();
+
+router.get("/", passport.authenticate(["user", "admin"], { session: false }), (req, res) => {
+  const products = getProductsByParkId(req.query.parkId);
+  res.status(200).json({ ok: true, products });
+});
 
 router.post("/", passport.authenticate(["admin"], { session: false }), (req, res) => {
   const { parkId, name, price, type } = req.body;
