@@ -1,6 +1,40 @@
 const router = require("express").Router();
 const passport = require("passport");
-const { createSession, getSessions, joinSession, sessionPayment, orderProduct } = require("../database/session");
+
+const { createSession, getSessions, joinSession, orderProduct, sessionPayment } = require("../utils/apiSessions");
+const { ApiUsers } = require("../utils/apiUsers");
+
+
+const { Alley, getAlleyById, getAlleyByQrCode } = require("../database/alleys");
+const { Bill } = require("../database/bill");
+const { Command } = require("../database/command");
+const { QRCode, getQRCodeById } = require("../database/qrcode");
+const { Session, getAvailableSessionByAlley } = require("../database/session");
+const { User_Session, createUserSession } = require("../database/UserSession");
+
+// Join a session by QR Code, if the session does not exist, create a new one
+router.post("join/:qrCode", passport.authenticate(["admin"], { session: false }), (req, res) => {
+  if (!qrCode) return res.status(400).json({ message: "QR Code is required", ok: false });
+
+  const userResponse = ApiUsers.get("/verifytoken"); // This is not working à finir
+  if (!userResponse.ok) return res.status(400).json({ message: userResponse.message, ok: false });
+  const user = userResponse.user;
+
+  const alley = getAlleyByQrCode(qrCode);
+  if (!alley) return res.status(400).json({ message: "Alley not found", ok: false });
+
+  let session = getAvailableSessionByAlley(alley.id);
+  if (!session) {
+    session = createSession(user.id, alley.id);
+    console.log("Session created for alley: ", alley.id);
+  }
+  
+  const userSession = User_Session.create({ id_user: user.id, id_session: session.id });
+  if (!userSession) return res.status(400).json({ message: "User session not created", ok: false });
+  console.log("User joined session: ", session.id);
+
+  res.status(200).json({ message: "User join the alley's session", ok: true, alley: alley, session: session.id });
+});
 
 router.post("/", passport.authenticate(["user", "admin"], { session: false }), async (req, res) => {
   const user = req.user;
