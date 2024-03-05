@@ -3,7 +3,44 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
 
-const users = require("../database/users");
+const { createNewUser, getAllUsers, userAlreadyExists } = require("../database/users");
+
+const emailRegex = /\S+@\S+\.\S+/;
+
+// Register route
+router.post("/register", async (req, res) => {
+  const { username, email, password } = req.body;
+  console.log("register");
+  console.log(req.body);
+
+  // Check if email is valid
+  if (!emailRegex.test(email)) return res.status(400).json({ message: "Invalid email", email: email });
+
+  // Check if password and name are valid
+  if (password.length < 5) return res.status(400).json({ message: "Password must be at least 5 characters long" });
+  if (username.length < 3) return res.status(400).json({ message: "Username must be at least 3 characters long" });
+
+  // Check if user already exists
+  if (userAlreadyExists(email)) return res.status(400).json({ message: "User already exists" });
+
+  // Hash passwords
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(password, salt);
+
+  const role = "customer";
+
+  createNewUser(username, email, hashedPassword, role);
+
+  res.status(201).json(
+    {
+      message: "User created",
+      user: {
+        username: username,
+        email: email
+      }
+    }
+  );
+});
 
 // Login route
 router.post("/login", async (req, res) => {
@@ -39,5 +76,6 @@ router.get("/user", passport.authenticate(["session"], { session: false }), (req
   if (!user) return res.status(401).json({ message: "Unauthorized", ok: false });
   res.status(200).json({ ok: true, user });
 });
+
 
 module.exports = router;
