@@ -1,4 +1,42 @@
-const { sequelize, User } = require('./database');
+const { Sequelize, DataTypes } = require('sequelize');
+const { sequelize } = require('./database');
+
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  username: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    unique: true, // Enforce unique username
+  },
+  email: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    unique: true, // Enforce unique email
+    validate: {
+      isEmail: true, // Validate email format (optional)
+    },
+  },
+  password: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    // Consider using secure hashing/salting for password storage
+  },
+  role: {
+    type: DataTypes.ENUM('agent', 'customer'),
+    allowNull: false,
+  },
+  created_at: {
+    type: DataTypes.DATE,
+    defaultValue: Sequelize.NOW,
+  },
+}, {
+  timestamps: false,
+  tableName: 'User',
+});
 
 // Create new user table
 const createNewUser = async (username, email, password, role) => {
