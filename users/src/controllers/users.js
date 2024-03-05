@@ -4,6 +4,7 @@ const passport = require("passport");
 const bcrypt = require("bcryptjs");
 
 const { createNewUser, getUserByEmail, isUserAlreadyExists } = require("../database/users");
+const { Token, createNewToken } = require("../database/token");
 
 const emailRegex = /\S+@\S+\.\S+/;
 
@@ -22,10 +23,7 @@ router.post("/register", async (req, res) => {
 
   // Check if user already exists
   const isUserExists = await isUserAlreadyExists(email);
-  console.log("\n\n\nisUserExists");
-  console.log(isUserExists);
-  console.log("\n\n\n");
-
+ 
   if (isUserExists) {
     return res.status(400).json({ message: "User already exists" });
   }
@@ -60,7 +58,9 @@ router.post("/login", async (req, res) => {
   if (password.length < 5) return res.status(400).json({ message: "Password must be at least 5 characters long" });
 
   // Retrieve user by email if exists
-  const user = getUserByEmail(email);
+  const user = await getUserByEmail(email);
+  console.log("login");
+  console.log(user);
   if (!user) return res.status(404).json({ message: "Invalid credentials" });
 
   // Validate credentials
@@ -68,8 +68,7 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
-  const payload = { id: user.id, role: user.role };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
+  const token = createNewToken(user);
 
   res.status(200).json({ token });
 });
