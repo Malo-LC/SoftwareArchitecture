@@ -9,7 +9,7 @@ const Token = sequelize.define('Token', {
   finished_at: DataTypes.DATE,
   life_time: DataTypes.INTEGER,
   id_user: DataTypes.INTEGER,
-}, { timestamps: false });
+}, { timestamps: false, tableName: 'Token' });
 
 const createNewToken = async (user, token, life_time) => {
   try {
@@ -35,5 +35,5 @@ const calculateFinishedAt = (created_at, life_time) => {
 };
 
 
-module.exports = { Token, createNewToken };
+module.exports = { Token, createNewToken }; 
 

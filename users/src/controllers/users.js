@@ -73,7 +73,7 @@ router.post("/login", async (req, res) => {
   res.status(200).json({ token });
 });
 
-// Verify token route
+// Verify token route (protected) for services
 router.get("/verifytoken", passport.authenticate(["service"], { session: false }), async (req, res) => {
 
   const decoded = verifyToken(req.headers.authorization.split(" ")[1]);
