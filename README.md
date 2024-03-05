@@ -10,7 +10,20 @@ These instructions will get you a copy of the project up and running on your loc
 
 You need to have Node.js and npm installed on your machine.
 
-### Installing
+### Launching with docker
+
+1. Launch the docker-compose file
+```sh
+docker-compose -f /docker/docker-compose up
+```
+
+Optional - if necessary you can rebuild the container
+```sh
+docker-compose -f /docker/docker-compose up --build
+```
+
+
+### Local Installing and Local Launching 
 
 1. Clone the repository
 
