@@ -10,7 +10,7 @@ services:
     volumes:
       - ../emails:/app
     depends_on:
-      - mysql
+      - mysql-service
 
   products-service:
     build: ../products
@@ -22,7 +22,7 @@ services:
     volumes:
       - ../products:/app
     depends_on:
-      - mysql
+      - mysql-service
 
   sessions-service:
     build: ../sessions
@@ -34,7 +34,7 @@ services:
     volumes:
       - ../sessions:/app
     depends_on:
-      - mysql
+      - mysql-service
 
   users-service:
     build: ../users
@@ -46,9 +46,9 @@ services:
     volumes:
       - ../users:/app
     depends_on:
-      - mysql
+      - mysql-service
 
-  mysql:
+  mysql-service:
     image: mysql:5.7
     container_name: mysql-service
     ports:
@@ -58,7 +58,7 @@ services:
     volumes:
       - ../database/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
       - ../database/mysql-data:/var/lib/mysql
-
+      
 volumes:
   mysql-data:
 
