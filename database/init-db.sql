@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Token (
   id_user INT,
 );
 
-CREATE TABLE IF NOT EXISTS Track (
+CREATE TABLE IF NOT EXISTS Alley (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255),
   id_qrcode INT
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS Session (
   active BOOLEAN,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   finished_at DATETIME,
-  id_track INT
+  id_alley INT
 );
 
 CREATE TABLE IF NOT EXISTS User_Session (
@@ -74,9 +74,9 @@ CREATE TABLE IF NOT EXISTS Product (
 
 ALTER TABLE Token ADD FOREIGN KEY (id_user) REFERENCES User (id);
 
-ALTER TABLE Track ADD FOREIGN KEY (id_qrcode) REFERENCES QRCode (id);
+ALTER TABLE Alley ADD FOREIGN KEY (id_qrcode) REFERENCES QRCode (id);
 
-ALTER TABLE Session ADD FOREIGN KEY (id_track) REFERENCES Track (id);
+ALTER TABLE Session ADD FOREIGN KEY (id_alley) REFERENCES Alley (id);
 
 ALTER TABLE User_Session ADD FOREIGN KEY (id_user) REFERENCES User (id);
 

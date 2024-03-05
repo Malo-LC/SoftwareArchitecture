@@ -9,6 +9,10 @@ const Product = sequelize.define('Product', {
   type: DataTypes.ENUM('snak', 'soft_drink', 'alcohol', 'food'),
 }, { timestamps: false, tableName: 'Product' });
 
+module.exports = {
+  Product
+};
+
 
 // const products = [
 //   {
