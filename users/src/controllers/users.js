@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
 
-const { createNewUser, getAllUsers, userAlreadyExists } = require("../database/users");
+const { createNewUser, getUserByEmail, isUserAlreadyExists } = require("../database/users");
 
 const emailRegex = /\S+@\S+\.\S+/;
 
@@ -21,7 +21,14 @@ router.post("/register", async (req, res) => {
   if (username.length < 3) return res.status(400).json({ message: "Username must be at least 3 characters long" });
 
   // Check if user already exists
-  if (userAlreadyExists(email)) return res.status(400).json({ message: "User already exists" });
+  const isUserExists = await isUserAlreadyExists(email);
+  console.log("\n\n\nisUserExists");
+  console.log(isUserExists);
+  console.log("\n\n\n");
+
+  if (isUserExists) {
+    return res.status(400).json({ message: "User already exists" });
+  }
 
   // Hash passwords
   const salt = bcrypt.genSaltSync(10);
@@ -46,8 +53,14 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  // Find user by email
-  const user = users.find((user) => user.email === email);
+  // Check if email is valid
+  if (!emailRegex.test(email)) return res.status(400).json({ message: "Invalid email", email: email });
+
+  // Check if password are valid
+  if (password.length < 5) return res.status(400).json({ message: "Password must be at least 5 characters long" });
+
+  // Retrieve user by email if exists
+  const user = getUserByEmail(email);
   if (!user) return res.status(404).json({ message: "Invalid credentials" });
 
   // Validate credentials
