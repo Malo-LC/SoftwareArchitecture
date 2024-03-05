@@ -16,7 +16,7 @@ router.get("/", passport.authenticate(["user", "admin"], { session: false }), (r
   res.status(200).json({ ok: true, sessions });
 });
 
-router.get("/qrCode/:qrCode", passport.authenticate(["session"], { session: false }), (req, res) => {
+router.get("/qrCode/:qrCode", passport.authenticate(["service"], { session: false }), (req, res) => {
   const sessions = getSessions();
   const qrCode = req.params.qrCode;
   if (!qrCode) return res.status(400).json({ message: "QR Code is required", ok: false });
