@@ -1,4 +1,4 @@
-- [ ] Pouvoir créer un compte utilisateur
+- [x] Pouvoir créer un compte utilisateur
 
 - [x] Envoyer un mail de confirmation de paiement
 
