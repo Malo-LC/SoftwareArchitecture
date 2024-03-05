@@ -8,6 +8,7 @@ const { ApiUsers } = require("../utils/apiUsers");
 const { Alley, getAlleyById, getAlleyByQrCode } = require("../database/alleys");
 const { Bill } = require("../database/bill");
 const { Command } = require("../database/command");
+const { Park } = require("../database/park");
 const { QRCode, getQRCodeById } = require("../database/qrcode");
 const { Session, getAvailableSessionByAlley } = require("../database/session");
 const { User_Session, createUserSession } = require("../database/UserSession");
