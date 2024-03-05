@@ -6,16 +6,14 @@ console.log(process.env.STRIPE);
 router.post("/", async (req, res) => {
     const Stripe = require("stripe");
     const stripe = Stripe(process.env.STRIPE);
-    const { amount, currency, source, description } = req.body;
+    
     const charge = await stripe.paymentIntents.create({
-        amount,
-        currency,
-        description,
-        confirm: true,
-        payment_method: 'pm_1MqLiJLkdIwHu7ixUEgbFdYF',
-        payment_method_types: ['card'],
-        return_url: 'https://www.myefrei.fr/'
+        amount: 2000,
+        currency: 'usd',
+        automatic_payment_methods: {
+          enabled: true,
+        },
     });
-    res.status(200).json({ ok: true, charge });
-});
+    res.json(charge);
+}, passport.authenticate("jwt", { session: false }));
 module.exports = router;
