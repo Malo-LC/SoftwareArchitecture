@@ -14,12 +14,12 @@ You need to have Node.js and npm installed on your machine.
 
 1. Launch the docker-compose file
 ```sh
-docker-compose -f /docker/docker-compose.yml up
+docker-compose -f /docker/docker-compose.yml up -d
 ```
 
 Optional - if necessary you can rebuild the container
 ```sh
-docker-compose -f /docker/docker-compose.yml up --build
+docker-compose -f /docker/docker-compose.yml up -d --build
 ```
 
 
