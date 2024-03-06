@@ -3,7 +3,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const helmet = require("helmet");
+// Database connection
+const { testDatabaseConnection, syncSequelize } = require("./database");
 
+// Tester la connexion à la base de données
+testDatabaseConnection();
+syncSequelize();
 const app = express();
 require("./passport")(app);
 
@@ -16,12 +21,7 @@ app.use(helmet());
 app.use(require("./controllers/users"));
 
 app.listen(process.env.USERS_API_PORT || 5000, () =>
-  console.log(`Server running on http://${process.env.USERS_API_HOST || localhost}:${process.env.USERS_API_PORT || 5000}`),
+  console.log(
+    `Server running on http://${process.env.USERS_API_HOST || "localhost"}:${process.env.USERS_API_PORT || 5000}`,
+  ),
 );
-
-// Database connection
-const { testDatabaseConnection, syncSequelize } = require('./database/database');
-
-// Tester la connexion à la base de données
-testDatabaseConnection();
-syncSequelize();

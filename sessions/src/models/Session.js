@@ -1,37 +1,19 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const { sequelize } = require('./database');
+const { Sequelize, DataTypes } = require("sequelize");
+const { sequelize } = require("../database");
 
-const Session = sequelize.define('Session', {
-  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-  active: DataTypes.BOOLEAN,
-  created_at: { type: DataTypes.DATE, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') },
-  finished_at: DataTypes.DATE,
-  id_alley: DataTypes.INTEGER,
-}, { timestamps: false, tableName: 'Session' });
+const Session = sequelize.define(
+  "Session",
+  {
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    active: DataTypes.BOOLEAN,
+    created_at: { type: DataTypes.DATE, defaultValue: Sequelize.literal("CURRENT_TIMESTAMP") },
+    finished_at: DataTypes.DATE,
+    id_alley: DataTypes.INTEGER,
+  },
+  { timestamps: false, tableName: "Session" },
+);
 
-const createSession = async (id_alley) => {
-  try {
-    return await Session.create({ active: true, id_alley: id_alley });
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
-const getAvailableSessionByAlley = async (id_alley) => {
-  try {
-    return await Session.findAll({ where: { id_alley: id_alley, active: true } });
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
-module.exports = { 
-  Session,
-  createSession,
-  getAvailableSessionByAlley
-};
+module.exports = Session;
 
 // const apiProducts = require("../utils/apiProducts");
 // const { findFreeAlley, modifyAlley } = require("./alleys");

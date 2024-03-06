@@ -4,61 +4,68 @@ services:
     build: ../emails
     container_name: email-service
     ports:
-      - "5500:5500"
+      - '5500:5500'
     env_file:
       - ../.env
     volumes:
       - ../emails:/app
     depends_on:
-      - mysql-service
+      mysql-service:
+        condition: service_healthy
 
   products-service:
     build: ../products
     container_name: product-service
     ports:
-      - "5100:5100"
+      - '5100:5100'
     env_file:
       - ../.env
     volumes:
       - ../products:/app
     depends_on:
-      - mysql-service
-
+      mysql-service:
+        condition: service_healthy
   sessions-service:
     build: ../sessions
     container_name: session-service
     ports:
-      - "5200:5200"
+      - '5200:5200'
     env_file:
       - ../.env
     volumes:
       - ../sessions:/app
     depends_on:
-      - mysql-service
+      mysql-service:
+        condition: service_healthy
 
   users-service:
     build: ../users
     container_name: user-service
     ports:
-      - "5000:5000"
+      - '5000:5000'
     env_file:
       - ../.env
     volumes:
       - ../users:/app
     depends_on:
-      - mysql-service
+      mysql-service:
+        condition: service_healthy
 
   mysql-service:
     image: mysql:5.7
     container_name: mysql-service
     ports:
-      - "3306:3306"
+      - '3306:3306'
     env_file:
       - ../.env
     volumes:
       # - ../database/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
       - ../database/mysql-data:/var/lib/mysql
-      
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      timeout: 20s
+      retries: 10
+
 volumes:
   mysql-data:
 
