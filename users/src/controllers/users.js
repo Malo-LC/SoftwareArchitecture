@@ -69,19 +69,19 @@ router.post("/login", async (req, res) => {
 });
 
 // Does not work with the new database
-router.get("/admin", passport.authenticate(["service"], { session: false }), (req, res) => {
+router.get("/admin", passport.authenticate(["service"], { session: false }), async (req, res) => {
   const id = parseInt(req.query.id, 10);
   if (!id) return res.status(401).json({ message: "Unauthorized", ok: false });
-  const user = User.findOne({ where: { id } });
+  const user = await User.findOne({ where: { id } });
   if (!user) return res.status(401).json({ message: "Unauthorized", ok: false });
   res.status(200).json({ ok: true, user });
 });
 
 // Does not work with the new database
-router.get("/user", passport.authenticate(["service"], { session: false }), (req, res) => {
+router.get("/user", passport.authenticate(["service"], { session: false }), async (req, res) => {
   const id = parseInt(req.query.id, 10);
   if (!id) return res.status(401).json({ message: "Unauthorized", ok: false });
-  const user = User.findOne({ where: { id, role: "agent" } });
+  const user = await User.findOne({ where: { id, role: "agent" } });
   if (!user) return res.status(401).json({ message: "Unauthorized", ok: false });
   res.status(200).json({ ok: true, user });
 });

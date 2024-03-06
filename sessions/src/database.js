@@ -12,22 +12,13 @@ const sequelize = new Sequelize(database, username, password, {
   dialect: "mysql",
 });
 
-async function syncSequelize() {
-  try {
-    await sequelize.sync();
-    console.log("Sequelize synchronized.");
-  } catch (error) {
-    console.error("Unable to sync Sequelize:", error);
-  }
-}
-
 async function testDatabaseConnection() {
   try {
     await sequelize.authenticate();
-    console.log("Connexion à la base de données réussie.");
+    console.log("✅ - Connected to database");
   } catch (error) {
-    console.error("Impossible de se connecter à la base de données:", error);
+    console.error("❌ - Error while connecting to db :", error);
   }
 }
 
-module.exports = { sequelize, testDatabaseConnection, syncSequelize };
+module.exports = { sequelize, testDatabaseConnection };

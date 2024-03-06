@@ -7,6 +7,7 @@ const Command = require("../models/Command");
 const Session = require("../models/Session");
 const UserSession = require("../models/UserSession");
 const apiProducts = require("../utils/apiProducts");
+const Park = require("../models/Park");
 
 const findSessionByQrCode = async (qrCode) => {
   const alley = await Alley.findOne({ where: { qrCode } });
@@ -26,14 +27,20 @@ router.post("/join/:qrCode", passport.authenticate(["admin"], { session: false }
   let session = await Session.findOne({ where: { id_alley: alley.id } });
   if (!session) {
     session = await Session.create({ id_alley: alley.id, active: false });
-    await Bill.create({ id_session: session.id, amount: 15 });
+    const userSession = await UserSession.create({ id_user: req.user.id, id_session: session.id });
+    await Bill.create({ id_user_session: userSession.id, amount: 15 });
   } else {
-    const bill = await Bill.findOne({ where: { id_session: session.id } });
+    const userSessionAlreadyExists = await UserSession.findOne({
+      where: { id_user: req.user.id, id_session: session.id },
+    });
+    if (userSessionAlreadyExists) return res.status(400).json({ message: "User already in session", ok: false });
+    const userSession = await UserSession.create({ id_user: req.user.id, id_session: session.id });
+
+    const bill = await Bill.findOrCreate({ where: { id_user_session: userSession.id } });
     if (bill.is_paid) return res.status(400).json({ message: "Session already paid", ok: false });
-    Bill.update({ amount: bill.amount + 15 }, { where: { id_session: session.id } });
+    Bill.update({ amount: bill.amount + 15 }, { where: { id_user_session: userSession.id } });
   }
 
-  await UserSession.create({ id_user: req.user.id, id_session: session.id });
   res.status(200).json({ message: "User joined the alley's session", ok: true });
 });
 
@@ -42,14 +49,17 @@ router.get("/", passport.authenticate(["user", "admin"], { session: false }), as
   res.status(200).json({ ok: true, sessions });
 });
 
-router.get("/qrCode/:qrCode", passport.authenticate(["service"], { session: false }), async (req, res) => {
+router.get("/park/:qrCode", passport.authenticate(["service"], { session: false }), async (req, res) => {
   const qrCode = req.params.qrCode;
   if (!qrCode) return res.status(400).json({ message: "QR Code is required", ok: false });
 
-  const session = await Session.findOne({ where: { qrCode } });
+  const session = await findSessionByQrCode(qrCode);
   if (!session) return res.status(400).json({ message: "Session not found", ok: false });
 
-  res.status(200).json({ ok: true, session });
+  const alley = await Alley.findOne({ where: { id: session.id_alley } });
+  const park = await Park.findOne({ where: { id: alley.id_park } });
+
+  res.status(200).json({ ok: true, park });
 });
 
 router.post("/order/:qrCode", passport.authenticate(["user", "admin"], { session: false }), async (req, res) => {
@@ -91,11 +101,11 @@ router.post("/payment/:qrCode", passport.authenticate(["user", "admin"], { sessi
   if (!session) return res.status(400).json({ message: "Session not found", ok: false });
   const userSession = await UserSession.findOne({ where: { id_user: user.id, id_session: session.id } });
   if (!userSession) return res.status(400).json({ message: "User not in session", ok: false });
-  let bill = await Bill.findOne({ where: { id_user_session: userSession.id } });
+  const bill = await Bill.findOne({ where: { id_user_session: userSession.id } });
   if (!bill) return res.status(400).json({ message: "Bill not found", ok: false });
   if (bill.amount < amount) return res.status(400).json({ message: "Amount is too high", ok: false });
 
-  bill = await Bill.update({ amount: bill.amount - amount }, { where: { id_user_session: userSession.id } });
+  await Bill.update({ amount: bill.amount - amount }, { where: { id_user_session: userSession.id } });
 
   res.status(200).json({ message: "Payment done", ok: true, bill });
 });

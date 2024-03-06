@@ -59,11 +59,11 @@ services:
     env_file:
       - ../.env
     volumes:
-      # - ../database/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ../database/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
       - ../database/mysql-data:/var/lib/mysql
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      timeout: 20s
+      timeout: 10s
       retries: 10
 
 volumes:

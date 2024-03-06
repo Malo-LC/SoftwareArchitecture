@@ -3,15 +3,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const { testDatabaseConnection, syncSequelize } = require("./database");
+const { testDatabaseConnection } = require("./database");
 
 const app = express();
+
 require("./passport")(app);
-// Database connection
 
 // Tester la connexion à la base de données
 testDatabaseConnection();
-syncSequelize();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -20,6 +19,12 @@ app.use(helmet());
 
 // Routes
 app.use(require("./controllers/products"));
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: "Something went wrong", ok: false });
+});
 
 app.listen(process.env.PRODUTS_API_PORT || 5100, () =>
   console.log(

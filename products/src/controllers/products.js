@@ -10,24 +10,23 @@ router.get("/", passport.authenticate(["user", "admin"], { session: false }), (r
   res.status(200).json({ ok: true, products });
 });
 
-router.post("/", passport.authenticate(["admin"], { session: false }), (req, res) => {
+router.post("/", passport.authenticate(["admin"], { session: false }), async (req, res) => {
   const { parkId, name, price, type } = req.body;
 
   if (!parkId || !name || !price || !type) {
     return res.status(400).json({ message: "All fields are required", ok: false });
   }
-  const product = Product.create({ park_id: parkId, name, price, type });
+  const product = await Product.create({ park_id: parkId, name, price, type });
 
   res.status(200).json({ ok: true, product });
 });
 
 router.get("/getCatalogForQRCode", passport.authenticate(["user", "admin"], { session: false }), async (req, res) => {
   const qrCode = req.query.qrCode;
-  const session = await apiSessions.get(`/qrCode/${qrCode}`);
+  const park = await apiSessions.get(`/park/${qrCode}`);
 
-  if (!session.ok) return res.status(400).json({ message: session.message, ok: false });
-
-  const products = await Product.findAll({ where: { park_id: session.park_id } });
+  if (!park.ok) return res.status(400).json({ message: park.message, ok: false });
+  const products = await Product.findAll({ where: { park_id: park.park.id } });
 
   res.status(200).json({ ok: true, products });
 });

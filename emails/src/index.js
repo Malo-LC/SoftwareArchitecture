@@ -46,6 +46,14 @@ app.post("/", async (req, res) => {
   }
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: "Something went wrong", ok: false });
+});
+
 app.listen(process.env.EMAILS_API_PORT || 5500, () =>
-  console.log(`Server running on http://${process.env.EMAILS_API_HOST || localhost}:${process.env.EMAILS_API_PORT || 5500}`),
+  console.log(
+    `Server running on http://${process.env.EMAILS_API_HOST || "localhost"}:${process.env.EMAILS_API_PORT || 5500}`,
+  ),
 );
