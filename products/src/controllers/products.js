@@ -21,6 +21,20 @@ router.post("/", passport.authenticate(["admin"], { session: false }), async (re
   res.status(200).json({ ok: true, product });
 });
 
+router.put("/:productId", passport.authenticate(["admin"], { session: false }), async (req, res) => {
+  const productId = req.params.productId;
+  const { name, price, type } = req.body;
+
+  if (!productId || !name || !price || !type) {
+    return res.status(400).json({ message: "All fields are required", ok: false });
+  }
+
+  const updated = await Product.update({ name, price, type }, { where: { id: productId } });
+  if (!updated) return res.status(400).json({ message: "Product not found", ok: false });
+
+  res.status(200).json({ message: "Product updated", ok: true });
+});
+
 router.get("/getCatalogForQRCode", passport.authenticate(["user", "admin"], { session: false }), async (req, res) => {
   const qrCode = req.query.qrCode;
   const park = await apiSessions.get(`/park/${qrCode}`);

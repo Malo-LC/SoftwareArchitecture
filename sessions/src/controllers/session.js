@@ -62,6 +62,11 @@ router.get("/park/:qrCode", passport.authenticate(["service"], { session: false 
   res.status(200).json({ ok: true, park });
 });
 
+router.get("/orders", passport.authenticate(["admin"], { session: false }), async (req, res) => {
+  const orders = await Command.findAll();
+  res.status(200).json({ ok: true, orders });
+});
+
 router.post("/order/:qrCode", passport.authenticate(["user", "admin"], { session: false }), async (req, res) => {
   const user = req.user;
   const qrCode = req.params.qrCode;

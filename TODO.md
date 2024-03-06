@@ -4,13 +4,13 @@
 
 - [ ] Payer avec Stripe
 
-- [ ] Pouvoir, en tant qu'admin, update un article
+- [x] Pouvoir, en tant qu'admin, update un article
 
 - [ ] Créer plus de données de base (products, alleys, etc.)
 
-- [ ] Un utilisateur doit contenir un nom, mail phone (optionnel), password
+- [x] Un utilisateur doit contenir un nom, mail phone (optionnel), password
 
-- [ ] Pour un admin, avoir une liste de toutes les commandes de son bowling
+- [x] Pour un admin, avoir une liste de toutes les commandes de son bowling
 
 - [ ] Prendre en compte si 2 utilisateurs paiement en même temps
 
