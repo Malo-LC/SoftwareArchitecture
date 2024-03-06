@@ -24,11 +24,17 @@ Database data is stored in folder: `./database/mysql-data`
 
 2. Show docker logs
 ```sh
-docker-compose -f ./docker/docker-compose.yml logs -f
+docker-compose -f ./docker/docker-compose.yml logs -f --tail 20
 ```
 `-f` to follow the logs
 
 `--tail <number>` Number of lines to show from the end of the logs for each container (default "all")
+
+or 
+
+```sh
+docker logs -f --tail 20 <nom-du-container>
+```
 
 3. Stop containers
 ```sh
