@@ -105,7 +105,14 @@ router.post("/payment/:qrCode", passport.authenticate(["user", "admin"], { sessi
   if (!bill) return res.status(400).json({ message: "Bill not found", ok: false });
   if (bill.amount < amount) return res.status(400).json({ message: "Amount is too high", ok: false });
 
-  await Bill.update({ amount: bill.amount - amount }, { where: { id_user_session: userSession.id } });
+  bill.amount = bill.amount - amount;
+  if (bill.amount === 0) {
+    bill.is_paid = true;
+    const session = await Session.findOne({ where: { id: userSession.id_session } });
+    session.active = true;
+    await session.save();
+  }
+  await bill.save();
 
   res.status(200).json({ message: "Payment done", ok: true, bill });
 });
