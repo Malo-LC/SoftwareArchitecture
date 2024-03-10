@@ -13,6 +13,7 @@ You need to have Node.js and npm installed on your machine.
 ### Launching with docker
 
 1. Launch the docker-compose file
+2. 
 ```sh
 docker-compose -f /docker/docker-compose up
 ```
