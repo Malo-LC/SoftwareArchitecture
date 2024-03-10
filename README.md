@@ -1,4 +1,4 @@
-# Software Architecture
+# Software Architecture group SE1-02 - Enrique CARRETERO, Malo LE CORVEC ,Benjamin LISZEWSKI ,Hugo RAVAILHE ,Victor TRAN
 
 This is a JavaScript project using Express, Passport, and JWT for authentication.
 
