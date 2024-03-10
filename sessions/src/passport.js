@@ -30,7 +30,7 @@ module.exports = function (app) {
   );
 
   passport.use(
-    "session",
+    "service",
     new CustomStrategy(function (req, done) {
       const apiKey = req.headers["x-api-key"];
       if (!apiKey || apiKey !== process.env.API_KEY) {

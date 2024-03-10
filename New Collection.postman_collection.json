@@ -37,7 +37,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base url products}}/getCatalogForQRCode?qrCode=anubfajncajikclxjkqnujg",
+							"raw": "{{base url products}}/getCatalogForQRCode?qrCode=1",
 							"host": [
 								"{{base url products}}"
 							],
@@ -47,7 +47,7 @@
 							"query": [
 								{
 									"key": "qrCode",
-									"value": "anubfajncajikclxjkqnujg"
+									"value": "1"
 								}
 							]
 						}
@@ -107,7 +107,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"parkId\": \"1\",\r\n    \"name\": \"eau\",\r\n    \"price\": 40,\r\n    \"type\": \"snack\"\r\n}",
+							"raw": "{\r\n    \"parkId\": \"1\",\r\n    \"name\": \"eau\",\r\n    \"price\": 40,\r\n    \"type\": \"soft_drink\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -136,7 +136,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token admin}}",
+									"value": "{{token user}}",
 									"type": "string"
 								}
 							]
@@ -168,18 +168,13 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{base url sessions}}/?parkId=1",
+							"raw": "{{base url sessions}}/join/1",
 							"host": [
 								"{{base url sessions}}"
 							],
 							"path": [
-								""
-							],
-							"query": [
-								{
-									"key": "parkId",
-									"value": "1"
-								}
+								"join",
+								"1"
 							]
 						}
 					},
@@ -201,18 +196,18 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{base url sessions}}/payment/anubfajncajikclxjkqnujg?amount=77",
+							"raw": "{{base url sessions}}/payment/1?amount=1",
 							"host": [
 								"{{base url sessions}}"
 							],
 							"path": [
 								"payment",
-								"anubfajncajikclxjkqnujg"
+								"1"
 							],
 							"query": [
 								{
 									"key": "amount",
-									"value": "77"
+									"value": "1"
 								}
 							]
 						}
@@ -285,6 +280,32 @@
 					"response": []
 				},
 				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@localhost.com\",\n    \"password\": \"admin\",\n    \"username\": \"malo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url users}}/register",
+							"host": [
+								"{{base url users}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "get all",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -317,18 +338,63 @@
 							}
 						},
 						"url": {
-							"raw": "{{base url users}}/all",
+							"raw": "{{base url users}}/admin?id=1",
 							"host": [
 								"{{base url users}}"
 							],
 							"path": [
-								"all"
+								"admin"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "send mail",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{API_KEY_VALUE}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "{{API_KEY_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"malo\",\r\n    \"email\": \"malolc2001@gmail.com\",\r\n    \"value\": 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:6000",
+					"host": [
+						"localhost"
+					],
+					"port": "6000"
+				}
+			},
+			"response": []
 		}
 	]
 }
